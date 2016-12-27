@@ -55,7 +55,7 @@ public class QTypeControllerTests {
 
     @Test
     public void getQType() throws Exception {
-        this.mockMvc.perform(get("/knapp/qtype").param("id", UUID.randomUUID().toString()))
+        this.mockMvc.perform(get("/knapp/qtype/{id}", UUID.randomUUID().toString()))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.description").value("TestDescription"));
     }

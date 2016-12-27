@@ -13,8 +13,8 @@ public class QTypeController {
 
     private HashMap<String, QType> cache = new HashMap<>();
 
-    @RequestMapping(method = RequestMethod.GET)
-    public QType get(@RequestParam(value = "id") String id) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public QType get(@PathVariable(value = "id") String id) {
         return new QType("TestDescription", "TestComments");
     }
 
