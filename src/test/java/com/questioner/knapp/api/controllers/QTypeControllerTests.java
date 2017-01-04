@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.questioner.knapp.api.controller;
+package com.questioner.knapp.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.questioner.knapp.core.model.QType;

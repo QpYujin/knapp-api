@@ -1,4 +1,4 @@
-package com.questioner.knapp.api.controller;
+package com.questioner.knapp.api.controllers;
 
 import com.questioner.knapp.core.model.QType;
 import org.slf4j.Logger;
