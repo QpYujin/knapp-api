@@ -16,7 +16,9 @@
 package com.questioner.knapp.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.questioner.knapp.core.model.QType;
+//import com.questioner.knapp.core.model.QType;
+import com.questioner.knapp.core.models.QType;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,16 +48,16 @@ public class QTypeControllerTests {
 
     @Test
     public void createQType() throws Exception {
-        String data = "{\"description\": \"test-description\",\"comments\": \"test-comments\"}";
+        String data = "{\"description\": \"frisco\",\"comments\": \"TX\"}";
         this.mockMvc.perform(post("/knapp/qtype")
                 .contentType(MediaType.APPLICATION_JSON).content(data))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.description").value("test-description"));
+                .andExpect(jsonPath("$.description").value("frisco"));
     }
 
     @Test
     public void getQType() throws Exception {
-        this.mockMvc.perform(get("/knapp/qtype/{id}", UUID.randomUUID().toString()))
+        this.mockMvc.perform(get("/knapp/qtype/{id}", "500"))
                 .andDo(print()).andExpect(status().isNotFound());
     }
 
@@ -71,9 +73,11 @@ public class QTypeControllerTests {
         String content = result.getResponse().getContentAsString();
         QType responseQType = new ObjectMapper().readValue(content, QType.class);
 
-        data = "{\"description\": \"test-description-updated\",\"comments\": \"test-comments-updated\"}";
-        this.mockMvc.perform(put("/knapp/qtype").param("id", responseQType.getId())
-                .contentType(MediaType.APPLICATION_JSON).content(data))
+        responseQType.setDescription("test-description-updated");
+        responseQType.setComments("test-comments-updated");
+
+        this.mockMvc.perform(put("/knapp/qtype/{id}", responseQType.getId().toString())
+                .contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(responseQType)))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.description").value("test-description-updated"));
     }
