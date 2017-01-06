@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/knapp/qtype")
 public class QTypeController {
@@ -46,6 +49,31 @@ public class QTypeController {
             qType = qTypeRepository.save(qType);
             return new ResponseEntity<>(qType, HttpStatus.OK);
         }
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity delete(@PathVariable(value = "id") String id) {
+        logger.info("delete({})", id);
+        QType qType = qTypeRepository.findOne(Long.valueOf(id));
+        if (qType == null)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        else
+            qTypeRepository.delete(Long.valueOf(id));
+        return new ResponseEntity<>(qType, HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<List<QType>> findAll() {
+        logger.info("findAll()");
+        Iterable<QType> qTypeIterable = qTypeRepository.findAll();
+
+        List<QType> qTypes = new ArrayList<>();
+        qTypeIterable.forEach(qTypes::add);
+
+        if (qTypes.size() == 0)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        else
+            return new ResponseEntity<>(qTypes, HttpStatus.OK);
     }
 
 }
