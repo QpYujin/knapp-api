@@ -2,12 +2,11 @@ package com.questioner.knapp.api.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.questioner.knapp.core.models.QElement;
 import com.questioner.knapp.core.models.QType;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +18,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,77 +28,78 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:/application-test.properties")
-public class QTypeControllerTests {
+public class QElementControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void createQType() throws Exception {
-        String data = "{\"description\": \"multiple-choice\",\"comments\": \"multiple-choice\"}";
-        this.mockMvc.perform(post("/knapp/qtype")
+    public void createQElement() throws Exception {
+        String data = "{\"elementtype\": \"MutlipleChoice\",\"uiview\": \"RadioButton\",\"comments\": \"creating element\"}";
+        this.mockMvc.perform(post("/knapp/QElement")
                 .contentType(MediaType.APPLICATION_JSON).content(data))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.description").value("multiple-choice"));
+                .andExpect(jsonPath("$.elementtype").value("MutlipleChoice"));
     }
 
     @Test
-    public void getQType() throws Exception {
-        this.mockMvc.perform(get("/knapp/qtype/{id}", "500"))
+    public void getQElement() throws Exception {
+        this.mockMvc.perform(get("/knapp/QElement/{id}", "500"))
                 .andDo(print()).andExpect(status().isNotFound());
     }
 
     @Test
-    public void updateQType() throws Exception {
-        String data = "{\"description\": \"multiple-choice\",\"comments\": \"multiple-choice\"}";
-        MvcResult result = this.mockMvc.perform(post("/knapp/qtype")
+    public void updateQElement() throws Exception {
+        String data = "{\"elementtype\": \"MutlipleChoice\",\"uiview\": \"RadioButton\",\"comments\": \"creating element\"}";
+        MvcResult result = this.mockMvc.perform(post("/knapp/QElement")
                 .contentType(MediaType.APPLICATION_JSON).content(data))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.description").value("multiple-choice"))
+                .andExpect(jsonPath("$.elementtype").value("MutlipleChoice"))
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        QType responseQType = new ObjectMapper().readValue(content, QType.class);
+        QElement QElement = new ObjectMapper().readValue(content, QElement.class);
 
-        responseQType.setDescription("fill-in-the-blanks");
-        responseQType.setComments("fill-in-the-blanks");
+        QElement.setElementtype("FillInTheBlanks");
+        QElement.setUiview("EmptyLine");
+        QElement.setComments("updated element type");
 
-        this.mockMvc.perform(put("/knapp/qtype/{id}", responseQType.getId().toString())
-                .contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(responseQType)))
+        this.mockMvc.perform(put("/knapp/QElement/{id}", QElement.getId().toString())
+                .contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(QElement)))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.description").value("fill-in-the-blanks"));
+                .andExpect(jsonPath("$.elementtype").value("FillInTheBlanks"));
     }
 
     @Test
-    public void deleteQType() throws Exception {
-        String data = "{\"description\": \"multiple-choice\",\"comments\": \"multiple-choice\"}";
-        MvcResult result = this.mockMvc.perform(post("/knapp/qtype")
+    public void deleteQElement() throws Exception {
+        String data = "{\"elementtype\": \"MutlipleChoice\",\"uiview\": \"RadioButton\",\"comments\": \"creating element\"}";
+        MvcResult result = this.mockMvc.perform(post("/knapp/QElement")
                 .contentType(MediaType.APPLICATION_JSON).content(data))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.description").value("multiple-choice"))
+                .andExpect(jsonPath("$.elementtype").value("MutlipleChoice"))
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        QType responseQType = new ObjectMapper().readValue(content, QType.class);
+        QElement QElement = new ObjectMapper().readValue(content, QElement.class);
 
-        Long deletedId = responseQType.getId();
+        Long deletedId = QElement.getId();
 
-        this.mockMvc.perform(delete("/knapp/qtype/{id}", responseQType.getId()))
+        this.mockMvc.perform(delete("/knapp/QElement/{id}", QElement.getId()))
                 .andDo(print()).andExpect(status().isOk());
 
-        this.mockMvc.perform(get("/knapp/qtype/{id}", deletedId))
+        this.mockMvc.perform(get("/knapp/QElement/{id}", deletedId))
                 .andDo(print()).andExpect(status().isNotFound());
     }
 
     @Test
-    public void findAllQTypes() throws Exception {
-        MvcResult result = this.mockMvc.perform(get("/knapp/qtype"))
+    public void findAllQElement() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/knapp/QElement"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        List<QType> qTypes = new ObjectMapper().readValue(content, new TypeReference<List<QType>>() {
+        List<QElement> qTypes = new ObjectMapper().readValue(content, new TypeReference<List<QElement>>() {
         });
 
         assertTrue(qTypes.size() > 0);
