@@ -22,7 +22,7 @@ public class QTypeService {
 
     public QType create(QType data) {
         logger.info("create({})", data);
-        QType qType = new QType(data.getDescription(), data.getComments());
+        QType qType = new QType(data.getName(), data.getDescription(), data.getComments());
         qType.populateCreateAtrributes();
         return qTypeRepository.save(qType);
     }
@@ -38,6 +38,7 @@ public class QTypeService {
         if (qType == null)
             return null;
         else {
+            qType.setName(data.getName());
             qType.setDescription(data.getDescription());
             qType.setComments(data.getComments());
             qType.populateUpdateAtrributes();

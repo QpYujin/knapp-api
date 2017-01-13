@@ -2,7 +2,11 @@ package com.questioner.knapp.api.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.questioner.knapp.api.services.QTypeService;
 import com.questioner.knapp.core.models.QType;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,13 +37,22 @@ public class QTypeControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private QTypeService qTypeService;
+
+    @Before
+    public void init() {
+        List<QType> qTypes = qTypeService.findAll();
+        for (QType qType : qTypes) qTypeService.delete(qType.getId());
+    }
+
     @Test
     public void createQType() throws Exception {
-        String data = "{\"description\": \"multiple-choice\",\"comments\": \"multiple-choice\"}";
+        String data = "{\"name\": \"MultipleChoice\",\"description\": \"multiple-choice\",\"comments\": \"multiple-choice\"}";
         this.mockMvc.perform(post("/knapp/qtype")
                 .contentType(MediaType.APPLICATION_JSON).content(data))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.description").value("multiple-choice"));
+                .andExpect(jsonPath("$.name").value("MultipleChoice"));
     }
 
     @Test
@@ -50,32 +63,33 @@ public class QTypeControllerTests {
 
     @Test
     public void updateQType() throws Exception {
-        String data = "{\"description\": \"multiple-choice\",\"comments\": \"multiple-choice\"}";
+        String data = "{\"name\": \"FillInTheBlanks\",\"description\": \"fill in the blanks\",\"comments\": \"fill in the blanks\"}";
         MvcResult result = this.mockMvc.perform(post("/knapp/qtype")
                 .contentType(MediaType.APPLICATION_JSON).content(data))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.description").value("multiple-choice"))
+                .andExpect(jsonPath("$.name").value("FillInTheBlanks"))
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
         QType responseQType = new ObjectMapper().readValue(content, QType.class);
 
-        responseQType.setDescription("fill-in-the-blanks");
-        responseQType.setComments("fill-in-the-blanks");
+        responseQType.setName("MultipleChoice");
+        responseQType.setDescription("multiple-choice");
+        responseQType.setComments("multiple-choice");
 
         this.mockMvc.perform(put("/knapp/qtype/{id}", responseQType.getId().toString())
                 .contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(responseQType)))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.description").value("fill-in-the-blanks"));
+                .andExpect(jsonPath("$.name").value("MultipleChoice"));
     }
 
     @Test
     public void deleteQType() throws Exception {
-        String data = "{\"description\": \"multiple-choice\",\"comments\": \"multiple-choice\"}";
+        String data = "{\"name\": \"MultipleChoice\",\"description\": \"multiple-choice\",\"comments\": \"multiple-choice\"}";
         MvcResult result = this.mockMvc.perform(post("/knapp/qtype")
                 .contentType(MediaType.APPLICATION_JSON).content(data))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.description").value("multiple-choice"))
+                .andExpect(jsonPath("$.name").value("MultipleChoice"))
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
@@ -92,6 +106,14 @@ public class QTypeControllerTests {
 
     @Test
     public void findAllQTypes() throws Exception {
+
+        String data = "{\"name\": \"MultipleChoice\",\"description\": \"multiple-choice\",\"comments\": \"multiple-choice\"}";
+        this.mockMvc.perform(post("/knapp/qtype")
+                .contentType(MediaType.APPLICATION_JSON).content(data))
+                .andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("MultipleChoice"));
+
+
         MvcResult result = this.mockMvc.perform(get("/knapp/qtype"))
                 .andDo(print())
                 .andExpect(status().isOk())

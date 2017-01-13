@@ -5,13 +5,15 @@ DROP TABLE knapp_question_type;
 
 CREATE TABLE knapp_question_type (
   ID          INT         NOT NULL AUTO_INCREMENT,
+  name        VARCHAR(50) NOT NULL,
   description VARCHAR(500)         DEFAULT NULL,
   comments    VARCHAR(100)         DEFAULT NULL,
   createdBy   VARCHAR(20) NOT NULL,
   createdAt   DATETIME    NOT NULL,
   updatedBy   VARCHAR(20),
   updatedAt   DATETIME,
-  PRIMARY KEY (ID)
+  PRIMARY KEY (ID),
+  UNIQUE KEY (name)
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = latin1
