@@ -1,10 +1,16 @@
 # Question Type defining what type it is multiple choice, fillintheBlank etc.
 # Mostly we will use multiple-choice but I added this so we can add any custom
 # questions (questions —> how many answers and answer type mapping)
-DROP TABLE knapp_question_type;
+
+# Drop all tables
+DROP TABLE IF EXISTS knapp_element;
+
+DROP TABLE IF EXISTS knapp_question_type;
+
+# Create all tables
 
 CREATE TABLE knapp_question_type (
-  ID          INT         NOT NULL AUTO_INCREMENT,
+  id          INT         NOT NULL AUTO_INCREMENT,
   name        VARCHAR(50) NOT NULL,
   description VARCHAR(500)         DEFAULT NULL,
   comments    VARCHAR(100)         DEFAULT NULL,
@@ -21,18 +27,18 @@ CREATE TABLE knapp_question_type (
 
 
 # Question has a elements  , Ex: MutlipleChoice is elementType , UIView :Radio Button
-DROP TABLE knapp_elements;
-
-CREATE TABLE knapp_elements (
-  ID          INT         NOT NULL AUTO_INCREMENT,
-  ElementType VARCHAR(500)         DEFAULT NULL,
-  UIView      VARCHAR(50) NOT NULL,
-  Comments    VARCHAR(100)         DEFAULT NULL,
-  createdBy   VARCHAR(20) NOT NULL,
-  createdAt   DATETIME    NOT NULL,
-  updatedBy   VARCHAR(20),
-  updatedAt   DATETIME,
-  PRIMARY KEY (ID)
+CREATE TABLE knapp_element (
+  id        INT         NOT NULL AUTO_INCREMENT,
+  typeid    INT         NOT NULL,
+  uiview    VARCHAR(50) NOT NULL,
+  Comments  VARCHAR(100)         DEFAULT NULL,
+  createdBy VARCHAR(20) NOT NULL,
+  createdAt DATETIME    NOT NULL,
+  updatedBy VARCHAR(20),
+  updatedAt DATETIME,
+  PRIMARY KEY (ID),
+  FOREIGN KEY (typeid) REFERENCES knapp_question_type (id)
+    ON DELETE CASCADE
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = latin1

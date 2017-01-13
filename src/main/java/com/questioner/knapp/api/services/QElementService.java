@@ -2,6 +2,7 @@ package com.questioner.knapp.api.services;
 
 import com.questioner.knapp.api.repositories.QElementRepository;
 import com.questioner.knapp.core.models.QElement;
+import com.questioner.knapp.core.models.QType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,16 @@ public class QElementService {
     @Autowired
     private QElementRepository qElementRepository;
 
+    @Autowired
+    private QTypeService qTypeService;
+
     public QElement create(QElement data) {
         logger.info("create({})", data);
-        QElement qElement = new QElement(data.getElementtype(), data.getUiview(), data.getComments());
-        qElement.populateCreateAtrributes();
+        QElement qElement = new QElement();
+        qElement.setUiview(data.getUiview());
+        qElement.setComments(data.getComments());
+        qElement.setQtype(qTypeService.get(data.getqTypeId()));
+        qElement.populateCreateAttributes();
         return qElementRepository.save(qElement);
     }
 
@@ -38,10 +45,11 @@ public class QElementService {
         if (qElement == null)
             return null;
         else {
-            qElement.setElementtype(data.getElementtype());
             qElement.setUiview(data.getUiview());
             qElement.setComments(data.getComments());
-            qElement.populateUpdateAtrributes();
+            qElement.setqTypeId(data.getqTypeId());
+            qElement.setQtype(qTypeService.get(data.getqTypeId()));
+            qElement.populateUpdateAttributes();
             qElement = qElementRepository.save(qElement);
             return qElement;
         }
