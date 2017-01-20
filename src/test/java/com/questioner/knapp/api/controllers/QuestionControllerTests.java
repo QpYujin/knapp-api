@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.questioner.knapp.api.services.QElementService;
 import com.questioner.knapp.api.services.QTypeService;
+import com.questioner.knapp.api.services.QuestionService;
 import com.questioner.knapp.core.models.QElement;
 import com.questioner.knapp.core.models.QType;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +33,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:/application-test.properties")
-public class QElementControllerTests {
+public class QuestionControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private QuestionService questionService;
 
     @Autowired
     private QElementService qElementService;
@@ -45,23 +50,31 @@ public class QElementControllerTests {
     private QType mulChoi;
     private QType filBlnk;
 
+    private static String QTYPE_DATA = "{\"name\": \"%s\",\"description\": \"%s\",\"comments\": \"%s\"}";
+
+    private static String QDATA = "{\"qTypeId\": \"%s\",\"text\": \"%s\",\"description\": \"%s\"}";
+
     @Before
     public void init() throws Exception {
-        String data = "{\"name\": \"MultipleChoice\",\"description\": \"multiple-choice\",\"comments\": \"multiple-choice\"}";
+
+        String data = String.format(QTYPE_DATA, "MultipleChoice", "multiple-choice", "multiple-choice");
+
         MvcResult result = this.mockMvc.perform(post("/knapp/qtype")
                 .contentType(MediaType.APPLICATION_JSON).content(data))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("MultipleChoice"))
+                .andExpect(jsonPath("$.id").isNotEmpty())
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
         mulChoi = new ObjectMapper().readValue(content, QType.class);
 
-        data = "{\"name\": \"FillInTheBlanks\",\"description\": \"fill in the blanks\",\"comments\": \"fill in the blanks\"}";
+        data = String.format(QTYPE_DATA, "FillInTheBlanks", "fill in the blanks", "fill in the blanks");
         result = this.mockMvc.perform(post("/knapp/qtype")
                 .contentType(MediaType.APPLICATION_JSON).content(data))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("FillInTheBlanks"))
+                .andExpect(jsonPath("$.id").isNotEmpty())
                 .andReturn();
 
         content = result.getResponse().getContentAsString();
@@ -79,11 +92,14 @@ public class QElementControllerTests {
 
     @Test
     public void createQElement() throws Exception {
-        String data = "{\"qTypeId\": \"" + mulChoi.getId() + "\",\"uiview\": \"RadioButton\",\"comments\": \"creating element\"}";
-        this.mockMvc.perform(post("/knapp/qelement")
+        String data = String.format(QDATA, mulChoi.getId(), "What is your name", "Provide your name");
+        this.mockMvc.perform(post("/knapp/question")
                 .contentType(MediaType.APPLICATION_JSON).content(data))
                 .andDo(print()).andExpect(status().isOk())
-                .andExpect(jsonPath("$.uiview").value("RadioButton"));
+                .andExpect(jsonPath("$.text").value("What is your name"))
+                .andExpect(jsonPath("$.description").value("Provide your name"))
+                .andExpect(jsonPath("$.qtype.name").value("MultipleChoice"))
+                .andExpect(jsonPath("$.qtype.id").value(mulChoi.getId()));
     }
 
     @Test
@@ -105,12 +121,14 @@ public class QElementControllerTests {
                 .andExpect(jsonPath("$.qtype.id").value(mulChoi.getId()));
     }
 
+    @Ignore
     @Test
     public void getQElementFail() throws Exception {
         this.mockMvc.perform(get("/knapp/qelement/{id}", "500"))
                 .andDo(print()).andExpect(status().isNotFound());
     }
 
+    @Ignore
     @Test
     public void updateQElement() throws Exception {
         String data = "{\"qTypeId\": \"" + mulChoi.getId() + "\",\"uiview\": \"RadioButton\",\"comments\": \"creating element\"}";
@@ -140,6 +158,7 @@ public class QElementControllerTests {
         assertEquals(filBlnk.getId(), qElement.getqTypeId());
     }
 
+    @Ignore
     @Test
     public void deleteQElement() throws Exception {
         String data = "{\"qTypeId\": \"" + mulChoi.getId() + "\",\"uiview\": \"RadioButton\",\"comments\": \"creating element\"}";
@@ -161,6 +180,7 @@ public class QElementControllerTests {
                 .andDo(print()).andExpect(status().isNotFound());
     }
 
+    @Ignore
     @Test
     public void findAllQElement() throws Exception {
 

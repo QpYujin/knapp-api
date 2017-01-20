@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/knapp/QElement")
+@RequestMapping("/knapp/qelement")
 public class QElementController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
