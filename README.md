@@ -22,9 +22,10 @@ This is just a basic integration test for knapp-api
 3. Run server using `docker-compose up` NOTE: Whenever repackaging knapp-api, a server is required to run test to complete package.
 4. Return back to root, package app using `mvn clean package`
 5. Rebuild image with `docker-compose build` or `docker build`
-6. Run app using `docker-compose up`
+6. Run `docker stop `docker ps -a -q` to stop database container.
+7. Run `docker-compose rm -vf` to remove all containers and all volume and containers within container to ensure clean slate.
 
-## Steps to run with created image
+## Steps to run with build image
 
 1. Install docker. Following [this guide](https://docs.docker.com/engine/installation/)
 1. Run app using `docker-compose up` from root 
