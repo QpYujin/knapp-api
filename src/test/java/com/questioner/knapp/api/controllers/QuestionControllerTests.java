@@ -121,14 +121,14 @@ public class QuestionControllerTests {
                 .andExpect(jsonPath("$.qtype.id").value(mulChoi.getId()));
     }
 
-    @Ignore
+    
     @Test
     public void getQElementFail() throws Exception {
         this.mockMvc.perform(get("/knapp/qelement/{id}", "500"))
                 .andDo(print()).andExpect(status().isNotFound());
     }
 
-    @Ignore
+    
     @Test
     public void updateQElement() throws Exception {
         String data = "{\"qTypeId\": \"" + mulChoi.getId() + "\",\"uiview\": \"RadioButton\",\"comments\": \"creating element\"}";
@@ -158,7 +158,7 @@ public class QuestionControllerTests {
         assertEquals(filBlnk.getId(), qElement.getqTypeId());
     }
 
-    @Ignore
+    
     @Test
     public void deleteQElement() throws Exception {
         String data = "{\"qTypeId\": \"" + mulChoi.getId() + "\",\"uiview\": \"RadioButton\",\"comments\": \"creating element\"}";
@@ -180,7 +180,7 @@ public class QuestionControllerTests {
                 .andDo(print()).andExpect(status().isNotFound());
     }
 
-    @Ignore
+    
     @Test
     public void findAllQElement() throws Exception {
 

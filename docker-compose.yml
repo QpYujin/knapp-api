@@ -1,0 +1,54 @@
+version: "2"
+services:
+  nginx:
+    build: ./nginx/
+    working_dir: "/etc/nginx"
+    ports:
+      - "80:80"
+    links:
+      - consul
+    environment:
+      COMPOSE_CONVERT_WINDOWS_PATHS: "${COMPOSE_CONVERT_WINDOWS_PATHS}"
+
+
+  knappapp:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SERVICE_NAME: knappapp
+      jdbc.username: root
+      jdbc.password: root
+      jdbc.url: jdbc:mysql://192.168.99.100:3306/knapptest
+    links:
+      - knappdb
+
+  knappdb:
+    image: mysql:latest
+    volumes: 
+      - ./db-dump:/docker-entrypoint-initdb.d/
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      COMPOSE_CONVERT_WINDOWS_PATHS: "${COMPOSE_CONVERT_WINDOWS_PATHS}"
+
+  # Consul and registrator container
+  consul:
+    image: gliderlabs/consul-server
+    ports:
+      - "8300:8300"
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:53/udp"
+    command: "-server -bootstrap"
+
+  registrator:
+    environment:
+      COMPOSE_CONVERT_WINDOWS_PATHS: "${COMPOSE_CONVERT_WINDOWS_PATHS}"
+    image: gliderlabs/registrator
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock"
+    links:
+      - consul
+    command: consul://consul:8500

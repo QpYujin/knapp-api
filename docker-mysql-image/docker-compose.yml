@@ -1,0 +1,10 @@
+mysql:
+  image: mysql:latest
+  container_name: knapp
+  volumes:
+    - ./db-dump:/docker-entrypoint-initdb.d/
+  ports:
+    - "3306:3306"
+  environment:
+    COMPOSE_CONVERT_WINDOWS_PATHS: "${COMPOSE_CONVERT_WINDOWS_PATHS}"
+    MYSQL_ROOT_PASSWORD: root
