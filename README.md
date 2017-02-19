@@ -15,20 +15,19 @@ This is just a basic integration test for knapp-api
 4. PUT {{ip:port}}/knapp/qtype/{{id}} ==> Edits Qtype with specified id with new database
 5. DELETE {{ip:port}}/knapp/qtype/{{id}} ==> Remove Qtype with specified ID from database
 		
-## To rebuild image after changes to code (DO NOT RUN THIS WHEN THERE IS NO CHANGES TO CODE):
+## To build image 
 
 1. Install docker. Following [this guide](https://docs.docker.com/engine/installation/)
-2. Cd into knapp-api/docker-mysql-image folder.
-3. Run server using `docker-compose up` NOTE: Whenever repackaging knapp-api, a server is required to run test to complete package.
-4. Return back to root, package app using `mvn clean package`
-5. Rebuild image with `docker-compose build` or `docker build`
-6. Run `docker stop `docker ps -a -q` to stop database container.
-7. Run `docker-compose rm -vf` to remove all containers and all volume and containers within container to ensure clean slate.
+2. Run all containers using `docker-compose up` from root (NOTE: In order to create a new jar file, server has to be running in order to run built in integration tests)
+3. Create jar file using `mvn clean package`
+4. Run `docker stop `docker ps -a -q`` to stop all containers
+5. Run `docker-compose rm -vf` to remove all containers and all volume and containers within container to ensure clean slate.
+6. Build image with `docker-compose build` or `docker build` 
 
-## Steps to run with build image
+## To run containers
 
 1. Install docker. Following [this guide](https://docs.docker.com/engine/installation/)
-1. Run app using `docker-compose up` from root 
+2. Run `docker-compose up` from root to run all containers
 
 ## Docker compose creates 5 services:
 
@@ -54,4 +53,4 @@ This is just a basic integration test for knapp-api
 ## Stopping all containers
 
 1. Run `docker stop `docker ps -a -q``
-2. Run `docker-compose rm -vf` to ensure containers are fully removed with all files deleted
+2. Run `docker-compose rm -vf` to ensure containers are fully removed with all volumes and files 
